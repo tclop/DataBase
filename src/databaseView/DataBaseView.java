@@ -6,16 +6,16 @@ import databaseController.DataBaseAppController;
 
 public class DataBaseView
 {
-
-	private DataBaseAppController baseController;
+	private DataBaseAppController baseController; 
 	
 	public DataBaseView(DataBaseAppController baseController)
 	{
-		this.baseController = baseController;
+		this.baseController = baseController; 
 	}
 	
 	public void displayInformation(String input)
 	{
 		JOptionPane.showMessageDialog(null, input);
 	}
+
 }

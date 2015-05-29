@@ -1,118 +1,114 @@
 package databaseController;
 
-import java.sql.*;
+import java.awt.Container;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+import javax.swing.JOptionPane;
+
+import databaseModel.QueryInfo;
+import databaseView.DataBaseFrame;
 
 public class DataBaseAppController
 {
-	private String connectionString;
-	private Connection dataBassConnection;
-	private DataBaseAppController baseController;
-	private String query;
-	/**
-	 * conectes to the server
-	 * 
-	 * @param baseController
-	 */
-	public DataBaseController(DataBaseAppController baseController)
+	private DataBaseFrame appFrame;
+	private DataBaseController dataController;
+	private ArrayList<QueryInfo> queryList;
+	
+	
+	public DataBaseAppController()
 	{
-		connectionString = "jdbc:mysql://127.0.0.1/gasoline_travel?user=root";
-		this.baseController = baseController;
-		checkDriver();
-		setupConnection();
+		dataController = new DataBaseController(this);
+		queryList = new ArrayList<QueryInfo>();
+		appFrame = new DataBaseFrame(this);
 	}
 	
-	public String getQuery()
-/**
- * checks if there is a driver that will conect to data base
- */
-	public String displayTabel()
+	public DataBaseFrame getAppFrame()
 	{
-		String results = "";
-		String query ="SHOW TABLSES";
-		try 
-		{
-			
-		}
-		public 
+		return appFrame;
 	}
-	private void checkDriver()
+	
+	public DataBaseController getDataController()
 	{
-		try
-		{
-			Class.forName("com.mysql,jdbc.jdbc.Driver");
-		}
-		catch (Exception currentException)
-		{
-			displayErrors(currentException);
-			System.exit(1);
-		}
-	}
-/**
- * 
- * @param curentExcption
- */
-	public void displayErrors(Exception curentExcption)
-	{
-
-	}
-/** setup conection with the server
- * 
- */
-	private void setupConnection()
-	{
-
-	}
-/**
- * this is the display tabel it helps display information
- * @return
- */
-	public String displayTables()
-	{
-		String result = "";
-		String query = "SHOW TABLES";
+		return dataController;
 		
-		/**
-		 * is gana try this
-		 */
+	}
+	
+	public ArrayList<QueryInfo> getQueryList()
+	{
+		return null;
+	}
+	/**
+	 * starts the application
+	 */
+	public void start()
+	{
+		
+		
+	}
+	/**
+	 * Loads how long it takes for the information to be displayed from mySQL to the Database project
+	 */
+	private void loadTimingInformation()
+	{
 		try
 		{
-			Statement firstStatement = dataBassConnection.createStatement();
-			ResultSet answers = firstStatement.executeQuery(query);
-			ResultSetMetaData answerData = answers.getMetaData();
-			
-			columns = new String[answerData.getColumnCount()];
-			
-			for(int columns = 0; column < answerData.getColumnCount(); column++)
+			File loadFile = new File("asdasda.save");
+			if(loadFile.exists())
 			{
-				columns[column] = answerData.getColumnName(column+1);
+				queryList.clear();
+				Scanner textScanner = new Scanner(loadFile);
+				while(textScanner.hasNext())
+				{
+					String query = textScanner.nextLine();
+					long queryTime = Long.parseLong(textScanner.nextLine());
+					queryList.add(new QueryInfo(query, queryTime));
+				}
+				textScanner.close();
+				JOptionPane.showInputDialog(getAppFrame(), queryList.size() + "QueryInfo objects were loaded into the application");
+			}
+			else
+			{
+				JOptionPane.showInputDialog(getAppFrame(), "File not present. No QueryInfo objects loaded");
 			}
 			
-			answers.close();
-			firstStatement.close();
 		}
-		catch(SQLException curentSQLError)
+		catch(IOException currentError)
 		{
-			displayErrors(curentSQLError);
+			dataController.displayErrors(currentError);
 		}
-		
-		return columns;
 	}
-	
-	public int insertSample()
+	/**
+	 * Save the data components into a file and stores it on a drive on your computer
+	 */
+	public void saveTimingInformation()
 	{
-		int rowsAfeected = -1;
-		String query = "INSERT INTO '";
 		try
 		{
-			Statement insertStatement = databaseConnection.createStatement();
-			rowsAffected = insertStatement.executeUpdate(query);
-			insertStatement.close();
+			File saveFile = new File("asfddfsa.save");
+			PrintWriter writer = new PrintWriter(saveFile);
+			if(saveFile.exists())
+			{
+				for (QueryInfo current : queryList)
+				{
+					writer.println(current.getQuery());
+					writer.println(current.getQueryTime());
+				}
+				writer.close();
+				JOptionPane.showInputDialog(getAppFrame(), queryList.size() + "QueryInfo objects were saved");
+			}
+			else
+			{
+				JOptionPane.showInputDialog(getAppFrame(), "File not present. No QueryInfo objects saved");
+			}
 		}
-		catch(SQLException currentError)
+		catch(IOException currentError)
 		{
-			displayErrors(currentError);
+			dataController.displayErrors(currentError);
 		}
-		return rowsAffected;
 	}
-	
+
 }
